@@ -1,10 +1,17 @@
 import React from 'react'
 import './chat.css'
+import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
+import ChatBox from '../../components/ChatBox/ChatBox'
+import RightSiderbar from '../../components/RightSidebar/RightSiderbar'
 
-function Chat() {
+const Chat = () =>{
   return (
-    <div>
-     
+    <div className='chat'>
+      <div className="chat-container">
+        <LeftSidebar />
+        <ChatBox />
+        <RightSiderbar />
+      </div>
     </div>
   )
 }
