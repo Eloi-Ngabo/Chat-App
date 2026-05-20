@@ -63,4 +63,4 @@ const logout = async() => {
 
 
 
-export {signup,login}
+export {signup,login,logout,auth,db}
