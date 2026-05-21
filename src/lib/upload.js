@@ -5,7 +5,7 @@ const upload = async (file) => {
 
 
 const storage = getStorage();
-const storageRef = ref(storage, `image/${Data.now() + file.name}`);
+const storageRef = ref(storage, `image/${Date.now() + file.name}`);
 
 const uploadTask = uploadBytesResumable(storageRef, file);
 
