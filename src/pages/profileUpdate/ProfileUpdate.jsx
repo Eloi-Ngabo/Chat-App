@@ -6,7 +6,7 @@ import { auth, db } from '../../config/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { upload } from '@testing-library/user-event/dist/upload'
+import upload from '../../lib/upload'
 
 const ProfileUpdate = () => {
 
@@ -58,7 +58,7 @@ const navigate = useNavigate();
         setBio(docSnap.data().bio)
        }
          if (docSnap.data().avatar) {
-        setPrevImage(docSnap.date().avatar)
+        setPrevImage(docSnap.data().avatar)
        }
       }
       else{
