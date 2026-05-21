@@ -24,12 +24,12 @@ const AppContextProvider = (props) => {
                 navigate('/profile')
             }
             await updateDoc(userRef,{
-                lastSeen:Data.now()
+                lastSeen:Date.now()
             })
             setInterval(async() => {
                 if (auth.chatUser) {
                 await updateDoc(userRef,{
-                lastSeen:Data.now()
+                lastSeen:Date.now()
             })  
                     
                 }
