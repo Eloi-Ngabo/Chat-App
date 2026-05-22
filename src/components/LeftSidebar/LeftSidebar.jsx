@@ -2,7 +2,9 @@ import React, { useContext, useState } from 'react'
 import './LeftSidebar.css'
 import assets from '../../assets/assets'
 import { useNavigate } from 'react-router-dom'
-import { collection, where, query, getDocs, doc, serverTimestamp, setDoc, updateDoc, arrayUnion } from 'firebase/firestore'
+import { collection, where, query, 
+  getDocs, doc, serverTimestamp, 
+  setDoc, updateDoc, arrayUnion } from 'firebase/firestore'
 import { db } from '../../config/firebase'
 import { AppContext } from '../../context/AppContext'
 import { toast } from 'react-toastify'
@@ -10,7 +12,7 @@ import { toast } from 'react-toastify'
 const LeftSidebar = () => {
 
 const navigate = useNavigate()
-const {userData, chatsData} = useContext(AppContext)
+const {userData,chatsData} = useContext(AppContext)
 const [user,setUser] = useState(null);
 const [showSearch, setShowSearch] = useState(false);
 
@@ -22,16 +24,16 @@ const inputHandler = async (e) => {
     const userRef = collection(db,'users');
     const q = query(userRef, where('username','==', input.toLowerCase()));
     const querySnap = await getDocs(q);
-   if (!querySnap.empty && querySnap.docs[0].data().id !== userData.id)
-    let userExist = false
-    chatData.map((user) =>{
-      if (user.rId === querySnap.docs[0].data().id) {
-        userExist = true; 
-      }
-    })
-    if (!userExist) {
+   if (!querySnap.empty && querySnap.docs[0].data().id !== userData.id){
+    let userExitst = false
+     chatsData.map((user)=>{
+     if (user.rId === querySnap.docs[0].data().id) {
+      userExitst = true;
+     }
+     })
+     if (!userExitst) {
       setUser(querySnap.docs[0].data())
-    }  
+     }
    }
     else { 
         setUser(null);
@@ -42,7 +44,7 @@ const inputHandler = async (e) => {
   }
   } catch (error) {
    
-  } 
+  }
 }
 
  const addChat = async () => { 
@@ -106,12 +108,12 @@ const inputHandler = async (e) => {
             <img src={user.avatar} alt="" />
                 <p>{user.name}</p>
         </div> 
-       :Array(12).fill("").map((item,index)=> (
+       :chatsData.map((item,index)=> (
          <div key={index} className="friends">
-            <img src={assets.profile_img} alt="" />
+            <img src={item.userData.avatar} alt="" />
             <div>
-                <p>Richard Sanford</p>
-                <span>Hello,How are you?</span>
+                <p>{item.userData.name}</p>
+                <span>{item.lastMessage}</span>
             </div>
         </div>
        ))}
