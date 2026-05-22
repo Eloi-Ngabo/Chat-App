@@ -82,6 +82,11 @@ const inputHandler = async (e) => {
     console.error(error)
   }
   }
+
+  const setchat = async (item) => {
+    console.log(item);
+
+  }
  
   return (
     <div className='ls'>
@@ -108,8 +113,8 @@ const inputHandler = async (e) => {
             <img src={user.avatar} alt="" />
                 <p>{user.name}</p>
         </div> 
-       :chatsData.map((item,index)=> (
-         <div key={index} className="friends">
+       {:chatsData?.map((item,index)=> (
+         <div onClick={()=>setchat(item)} key={index} className="friends">
             <img src={item.userData.avatar} alt="" />
             <div>
                 <p>{item.userData.name}</p>
