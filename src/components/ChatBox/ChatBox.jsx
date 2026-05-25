@@ -2,33 +2,78 @@ import React, { useContext, useState, useEffect } from 'react'
 import './ChatBox.css'
 import assets from '../../assets/assets'
 import {AppContext} from '../../context/AppContext'
-import { onSnapshot, doc } from 'firebase/firestore'
+import { onSnapshot, doc, updateDoc, getDoc, arrayUnion } from 'firebase/firestore'
 import { db } from '../../config/firebase'
+import { toast } from 'react-toastify';
+
 
 const ChatBox = () => {
 
- const {userData, messagesId, chatUser, messages, setMessages} = useContext(AppContext);
+ const {userData, messagesId, chatsUser, messages, setMessages} = useContext(AppContext);
 
  const [input,setInput] = useState("");
 
+ const sendMessage = async () => {
+  try {
+    if (input &&  messagesId) {
+      await updateDoc(doc(db, "messages", messagesId),{
+        messages: arrayUnion({
+          sId: userData.id,
+          text: input,
+          createdAt: new Date()
+        })
+      }) 
+      
+      const userIDs = [chatsUser.rId, userData.id]
+
+      userIDs.forEach(async (id) => {
+        const userChatsRef = doc(db, "chats", id);
+        const userChatsSnapshot = await getDoc(userChatsRef);
+        if (userChatsSnapshot.exists()) {
+          const userChatsData = userChatsSnapshot.data();
+          const chatIndex = userChatsData.chatsData.findIndex((c) => c.messagesId === messagesId);
+          if (chatIndex !== -1) return;
+          userChatsData.chatsData[chatIndex].lastmessage = input.slice(0,30);
+          userChatsData.chatsData[chatIndex].updatedAt = Date.now();
+          if(userChatsData.chatsData[chatIndex].rId === userData.id){
+            userChatsData.chatsData[chatIndex].messageSeen = false;
+          }
+          await updateDoc(userChatsRef, {
+            chatsData: userChatsData.chatsData
+          });
+        }
+      })
+    };
+  } catch (error) {
+    toast.error("Failed to send message. Please try again.");
+   
+  }
+ }
+
+
+
  useEffect(() => {
   if (messagesId) {
-    const unSub = onSnapshot(doc(db, "messages", messagesId),(res) =>
-       {setMessages(res.data().messages.reverse());
-        console.log(res.data().messages.reverse());
+    const unSub = onSnapshot(doc(db, "messages", messagesId), (res) => {
+      if (res.exists()) {
+        setMessages(res.data().messages.reverse());
+      } else {
+        setMessages([]);
+        console.log("Missing messages document:", messagesId);
+      }
     });
     return () => {
       unSub();
     };
   }
- },[messagesId])
+}, [messagesId]);
 
 
-  return chatUser ? (
+  return chatsUser ? (
     <div className='chat-box'> 
     <div className='chat-user'>
-        <img src={chatUser.img.userData.avatar} alt="" />
-        <p>{chatUser.userData.name} <img className ='dot' src={assets.green_dot} alt="" /></p>
+        <img src={chatsUser.userData.avatar} alt="" />
+        <p>{chatsUser.userData.name} <img className ='dot' src={assets.green_dot} alt="" /></p>
         <img src={assets.help_icon}   className='help'  alt="" />
     </div>
     <div className='chat-msg'>
@@ -55,12 +100,12 @@ const ChatBox = () => {
     </div>  
     </div>
     <div className='chat-input'>
-    <input type="text" placeholder='send a message' />
+    <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='send a message' />
     <input type="file" id='image' accept='image/png, image/jpeg' hidden/>
     <label htmlFor="image">
         <img src={assets.gallery_icon} alt="" />
     </label>
-    <img src={assets.send_button} alt="" />
+    <img onClick={sendMessage} src={assets.send_button} alt="" />
     </div>
     </div>
   )
