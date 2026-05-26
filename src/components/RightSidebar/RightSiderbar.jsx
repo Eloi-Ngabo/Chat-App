@@ -1,15 +1,31 @@
-import React from 'react'
+import React, {useContext, useEffect, useState} from  'react'
 import './RightSiderbar.css'
 import assets from '../../assets/assets'
 import { logout } from '../../config/firebase'
+import { AppContext } from '../../context/AppContext'
 
 const RightSiderbar = () => {
-  return (
+
+ const {chatUser,messages} = useContext(AppContext);
+ const [msgImages, setMsgImages] = useState([]);
+
+ useEffect(() => {
+  let tempVar = [];
+  messages.map((msg) => {
+    if (msg.images) {
+      tempVar.push(msg.images);
+    }
+    console.log(tempVar);
+  });
+
+ }, [messages])
+
+  return chatUser ? (
     <div className='rs'>
      <div className="rs-profile">
-      <img src={assets.profile_img} alt="" />
-      <h3>Richard sanford <img src={assets.green_dot} className='dot' alt="" /></h3>
-      <p>Hey, There i am Richard sanford using chat app</p>
+      <img src={chatUser.userData.avatar} alt="" />
+      <h3>{chatUser.userData.name} <img src={assets.green_dot} className='dot' alt="" /></h3>
+      <p>{chatUser.userData.bio}</p>
      </div>
      <hr />
      <div className="rs-media">
@@ -26,6 +42,9 @@ const RightSiderbar = () => {
      <button onClick={()=>logout()}>Logout</button>
     </div>
   )
+  : <div className='rs '>
+    <button onClick={()=>logout()}>Logout</button>     
+  </div>
 }
 
 export default RightSiderbar
