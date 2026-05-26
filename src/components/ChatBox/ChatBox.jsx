@@ -14,8 +14,15 @@ import { toast } from "react-toastify";
 import upload from "../../lib/upload";
 
 const ChatBox = () => {
-  const { userData, messagesId, chatsUser, messages, setMessages } =
-    useContext(AppContext);
+  const {
+    userData,
+    messagesId,
+    chatsUser,
+    messages,
+    setMessages,
+    setChatUser,
+    setMessagesId,
+  } = useContext(AppContext);
 
   const [input, setInput] = useState("");
 
@@ -139,6 +146,14 @@ const ChatBox = () => {
   return chatsUser ? (
     <div className="chat-box">
       <div className="chat-user">
+        <button
+          onClick={() => {
+            setChatUser(null);
+            setMessagesId(null);
+          }}
+        >
+          Back
+        </button>
         <img src={chatsUser.userData.avatar} alt="" />
         <p>
           {chatsUser.userData.name}{" "}
@@ -151,7 +166,7 @@ const ChatBox = () => {
           <div
             key={index}
             className={msg.sId === userData.id ? "s-msg" : "r-msg"}
->
+          >
             {msg["image"] ? (
               <img className="msg-img" src={msg.image} alt="" />
             ) : (

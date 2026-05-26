@@ -55,7 +55,9 @@ const LeftSidebar = () => {
       } else {
         setShowSearch(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const addChat = async () => {
