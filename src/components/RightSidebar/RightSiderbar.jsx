@@ -6,7 +6,7 @@ import { AppContext } from '../../context/AppContext'
 
 const RightSiderbar = () => {
 
- const {chatUser,messages} = useContext(AppContext);
+ const {chatsUser,messages} = useContext(AppContext);
  const [msgImages, setMsgImages] = useState([]);
 
  useEffect(() => {
@@ -15,28 +15,31 @@ const RightSiderbar = () => {
     if (msg.images) {
       tempVar.push(msg.images);
     }
-    console.log(tempVar);
+    setMsgImages(tempVar);
   });
 
  }, [messages])
 
-  return chatUser ? (
+  return chatsUser ? (
     <div className='rs'>
      <div className="rs-profile">
-      <img src={chatUser.userData.avatar} alt="" />
-      <h3>{chatUser.userData.name} <img src={assets.green_dot} className='dot' alt="" /></h3>
-      <p>{chatUser.userData.bio}</p>
+      <img src={chatsUser.userData.avatar} alt="" />
+      <h3>{chatsUser.userData.name} <img src={assets.green_dot} className='dot' alt="" /></h3>
+      <p>{chatsUser.userData.bio}</p>
      </div>
      <hr />
      <div className="rs-media">
       <p>Media</p>
       <div>
-        <img src={assets.pic1} alt="" />
+        {msgImages.map((url, index) => (
+          <img key={index} src={url} alt="" />))}
+
+        {/* <img src={assets.pic1} alt="" />
         <img src={assets.pic2} alt="" />
         <img src={assets.pic3} alt="" />
         <img src={assets.pic4} alt="" />
         <img src={assets.pic1} alt="" />
-        <img src={assets.pic2} alt="" />
+        <img src={assets.pic2} alt="" /> */}
       </div>
      </div>
      <button onClick={()=>logout()}>Logout</button>
