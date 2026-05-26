@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import './ChatBox.css'
 import assets from '../../assets/assets'
 import {AppContext} from '../../context/AppContext'
-import { onSnapshot, doc, updateDoc, getDoc, arrayUnion } from 'firebase/firestore'
+import { onSnapshot, doc, updateDoc, getDoc, arrayUnion  } from 'firebase/firestore'
 import { db } from '../../config/firebase'
 import { toast } from 'react-toastify';
 
@@ -29,10 +29,11 @@ const ChatBox = () => {
       userIDs.forEach(async (id) => {
         const userChatsRef = doc(db, "chats", id);
         const userChatsSnapshot = await getDoc(userChatsRef);
+
         if (userChatsSnapshot.exists()) {
           const userChatsData = userChatsSnapshot.data();
-          const chatIndex = userChatsData.chatsData.findIndex((c) => c.messagesId === messagesId);
-          if (chatIndex !== -1) return;
+          const chatIndex = userChatsData.chatsData.findIndex((c) => c.messageId === messagesId);
+          //if (chatIndex === -1) return;
           userChatsData.chatsData[chatIndex].lastmessage = input.slice(0,30);
           userChatsData.chatsData[chatIndex].updatedAt = Date.now();
           if(userChatsData.chatsData[chatIndex].rId === userData.id){
@@ -45,22 +46,42 @@ const ChatBox = () => {
       })
     };
   } catch (error) {
-    toast.error("Failed to send message. Please try again.");
-   
+    toast.error(error.message);
   }
+  setInput("");
  }
 
+// const convertTimestamp = (timestamp) => {
+//   let date = timestamp.toDate();
+//   const hour = date.getHours();
+//   const minute = date.getMinutes();
+//   if (hour > 12) {
+//     return hour -12 + ":" + minute + " PM";
+// }
+//   else {
+//     return hour + ":" + minute + " AM";
+//   }
+// }
+
+const convertTimestamp = (timestamp) => {
+  if (!timestamp) return "";
+
+  const date =
+    typeof timestamp.toDate === "function"
+      ? timestamp.toDate()
+      : new Date(timestamp);
+
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 
  useEffect(() => {
   if (messagesId) {
     const unSub = onSnapshot(doc(db, "messages", messagesId), (res) => {
-      if (res.exists()) {
-        setMessages(res.data().messages.reverse());
-      } else {
-        setMessages([]);
-        console.log("Missing messages document:", messagesId);
-      }
+      setMessages(res.data().messages.reverse());
     });
     return () => {
       unSub();
@@ -77,27 +98,17 @@ const ChatBox = () => {
         <img src={assets.help_icon}   className='help'  alt="" />
     </div>
     <div className='chat-msg'>
-      <div className='s-msg'>
-        <p className='msg'>Lorem ipsum is placeholder text commonly used in ..</p>
+      {messages.map((msg,index) => (
+        <div key={index} className= {msg.sId === userData.id ? 's-msg' : 'r-msg'} >
+        <p className='msg'>{msg.text}</p>
         <div>
-            <img src={assets.profile_img} alt="" />
-            <p>2:30 PM</p>
+            <img src={msg.sId === userData.id ? userData.avatar : chatsUser.userData.avatar} alt="" />
+            <p>{convertTimestamp(msg.createdAt)}</p>
         </div>
     </div>  
-      <div className='s-msg'>
-        <img className='msg-img' src={assets.pic1} alt="" />
-        <div>
-            <img  src={assets.profile_img} alt="" />
-            <p>2:30 PM</p>
-        </div>
-    </div>  
-      <div className='r-msg'>
-        <p className='msg'>Lorem ipsum is placeholder text commonly used in ..</p>
-        <div>
-            <img src={assets.profile_img} alt="" />
-            <p>2:30 PM</p>
-        </div>
-    </div>  
+
+      ))}
+      
     </div>
     <div className='chat-input'>
     <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='send a message' />
