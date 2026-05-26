@@ -4,10 +4,19 @@ import LeftSidebar from "../../components/LeftSidebar/LeftSidebar";
 import ChatBox from "../../components/ChatBox/ChatBox";
 import RightSiderbar from "../../components/RightSidebar/RightSiderbar";
 import { AppContext } from "../../context/AppContext";
+import assets from "../../assets/assets";
 
 const Chat = () => {
-  const { chatData, userData } = useContext(AppContext);
+  const { chatData, userData, chatsUser, messages, setChatUser } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
+
+  <img 
+  src={assets.arrow_icon} 
+  className="arrow" 
+  alt="" 
+  onClick={() => setChatUser(null)} 
+/>
+
 
   useEffect(()=>{
     if (chatData && userData) {
