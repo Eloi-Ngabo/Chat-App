@@ -121,7 +121,7 @@ const LeftSidebar = () => {
           </div>
         ) : (
           chatData?.map((item, index) => (
-            <div onClick={() => setchat(item)} key={index} className="friends">
+            <div onClick={() => setchat(item)} key={index} className={`friends ${item.messageSeen || item.messageId === messagesId ? "" : "border"}`}>
               <img src={item.userData.avatar} alt="" />
               <div>
                 <p>{item.userData.name}</p>

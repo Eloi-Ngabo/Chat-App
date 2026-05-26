@@ -5,9 +5,10 @@ import Chat from './pages/Chat/Chat'
 import ProfileUpdate from './pages/profileUpdate/ProfileUpdate'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
 import { AppContext } from './context/AppContext'
+
 
 function App() {
 
