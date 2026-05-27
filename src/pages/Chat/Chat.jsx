@@ -14,7 +14,7 @@ const Chat = () => {
   src={assets.arrow_icon} 
   className="arrow" 
   alt="" 
-  onClick={() => setChatUser(null)} 
+  
 />
 
 
