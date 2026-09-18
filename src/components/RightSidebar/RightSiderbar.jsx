@@ -12,8 +12,8 @@ const RightSiderbar = () => {
  useEffect(() => {
   let tempVar = [];
   messages.map((msg) => {
-    if (msg.images) {
-      tempVar.push(msg.images);
+    if (msg.image) {
+      tempVar.push(msg.image);
     }
   });
  setMsgImages(tempVar);
@@ -23,7 +23,7 @@ const RightSiderbar = () => {
     <div className='rs'>
      <div className="rs-profile">
       <img src={chatsUser.userData.avatar} alt="" />
-      <h3>{chatsUser.userData.name} <img src={assets.green_dot} className='dot' alt=""/></h3>
+      {chatsUser.userData.name} {Date.now() - chatsUser.userData.lastSeen <= 7000 ? <img className="dot" src={assets.green_dot} alt="" /> : null}
       <p>{chatsUser.userData.bio}</p>
      </div>
      <hr />

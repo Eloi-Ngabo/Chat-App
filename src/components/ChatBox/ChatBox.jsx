@@ -22,6 +22,8 @@ const ChatBox = () => {
     setMessages,
     setChatUser,
     setMessagesId,
+    chatvisible,
+    setChatVisible
   } = useContext(AppContext);
 
   const [input, setInput] = useState("");
@@ -144,21 +146,14 @@ const ChatBox = () => {
   }, [messagesId]);
 
   return chatsUser ? (
-    <div className="chat-box">
+    <div className={`chat-box ${chatvisible ? "" : "hidden"}`}>
       <div className="chat-user">
-        <button
-          onClick={() => {
-            setChatUser(null);
-            setMessagesId(null);
-          }}
-        >
-          Back
-        </button>
         <img src={chatsUser.userData.avatar} alt="" />
         <p>
           {chatsUser.userData.name} {Date.now() - chatsUser.userData.lastSeen <= 7000 ? <img className="dot" src={assets.green_dot} alt="" /> : null}
         </p>
         <img src={assets.help_icon} className="help" alt="" />
+        <img onClick={() => {setChatVisible(false);}}  src={assets.arrow_icon} className="arrow" alt="" />
       </div>
       <div className="chat-msg">
         {messages.map((msg, index) => (
@@ -207,7 +202,7 @@ const ChatBox = () => {
       </div>
     </div>
   ) : (
-    <div className="chat-welcome">
+    <div className={`chat-welcome ${chatvisible ? "" : "hidden"}`}>
       <img src={assets.logo_icon} alt="" />
       <p>chat anytime, anywhere</p>
     </div>

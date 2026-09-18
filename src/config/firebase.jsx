@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, setDoc,doc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getFirestore, setDoc,doc, query, where, getDocs, collection } from "firebase/firestore";
 import { toast } from "react-toastify";
 
 // Your web app's Firebase configuration
@@ -56,11 +56,30 @@ const logout = async() => {
     await signOut(auth)
   } catch (error) {
     console.error(error);
-  toast.error(error.code.split('/')[1].split('-').join(" "));
+  toast.error(error.code.split('/')[1]?.split('-').join(" "));
     
   }
 }
 
+const resetPass = async(email) => {
+  if (!email) {
+    toast.error("Please enter your email");
+    return null;
+  }
+  try {   
+    const userRef = collection(db,'users');
+    const q = query(userRef, where("email", "==", email));
+    const querySnap = await getDocs(q);
+    if (!querySnap.empty) {
+     await sendPasswordResetEmail(auth, email);
+     toast.success(" Reset email sent");
+    } else {
+      toast.error("Email does not exist");
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message);
+  }
+}
 
-
-export {signup,login,logout,auth,db}
+export {signup,login,logout,auth,db,resetPass}

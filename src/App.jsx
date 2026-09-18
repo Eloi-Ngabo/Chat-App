@@ -3,9 +3,9 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import Login from './pages/Login/Login'
 import Chat from './pages/Chat/Chat'
 import ProfileUpdate from './pages/profileUpdate/ProfileUpdate'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './config/firebase'
 import { AppContext } from './context/AppContext'
 
@@ -25,7 +25,7 @@ function App() {
         navigate('/')
       }
     })
-  },[])
+  }, [loadUserData, navigate])
 
   return (
     <>

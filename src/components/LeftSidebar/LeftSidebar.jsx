@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./LeftSidebar.css";
 import assets from "../../assets/assets";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,8 @@ const LeftSidebar = () => {
     setChatUser,
     setMessagesId,
     messagesId,
+    chatvisible,
+     setChatVisible
   } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
@@ -89,6 +91,20 @@ const LeftSidebar = () => {
           messageSeen: true,
         }),
       });
+     
+      const uSnap = await getDoc(doc(db, "users", user.id));
+      const uData = uSnap.data();
+      setChatUser({
+       messageId: newmessageRef.id,
+       lastmessage: "",
+        rId: user.id,
+        updateAt: Date.now(),
+        messageSeen: true,
+        userData: uData
+      });
+      setShowSearch(false);
+      setChatVisible(true);
+
     } catch (error) {
       toast.error(error.message);
       console.error(error);
@@ -107,13 +123,29 @@ const LeftSidebar = () => {
       await updateDoc(userChatsRef, {
         chatsData: userChatsData.chatsData,
       });
+      setChatVisible(true);
     } catch (error) {
       toast.error(error.message);
     }
   };
 
+  useEffect(() => {
+    const updataChatUserData = async () => {
+      if (chatsUser) {
+        const userRef = doc(db, "users", chatsUser.userData.id);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        setChatUser((prev) => ({ ...prev, userData }));
+      }
+    };
+    updataChatUserData();
+
+  }, [chatData]);
+
+
+
   return (
-    <div className="ls">
+    <div className={`ls ${chatvisible ? "hidden" : ""}`}>
       <div className="ls-top">
         <div className="ls-nav">
           <img src={assets.logo} className="logo" alt="" />
